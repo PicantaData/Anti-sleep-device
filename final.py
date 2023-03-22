@@ -1,15 +1,12 @@
 import numpy as np
-#import playsound
+from pydub import AudioSegment
+from pydub.playback import play
 # import time
 import cv2
 
 
-fixed_length = 30
-fixed_width = 14.5
+alarm = AudioSegment.from_wav('beep-05.wav')
 
-alarm = r"/home/raspberrypi/Desktop/project/Anti-sleep-device/beep-05.mp3"
-
-focal_length_measured = 400
 
 cap = cv2.VideoCapture(0)
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -17,8 +14,8 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_frontaleye_default.xml')
 count = 0
 
 
-#def play_alarm():
-    #playsound.playsound(r'//home//raspberrypi//Desktop//project//Anti-sleep-device//beep-05.mp3')
+def play_alarm():
+    play(alarm)
 
 #  The width of the face w decides which face to capture
 #  As width increases distance decreases
@@ -32,8 +29,8 @@ def face_(faces,gray):
             vector2 = faces[1:,:]
             distance1 = (vector1[0,3])   
             distance2 = (vector2[0,3])
-            #print(distance1)
-            #print(distance2)
+            print(distance1)
+            print(distance2)
             
             if(distance1 > distance2):
                 face = vector1   
@@ -43,6 +40,7 @@ def face_(faces,gray):
 
 while True:
     ret, frame = cap.read()
+    frame = cv2.resize(frame, (500,400))
     gray = cv2.cvtColor(frame , cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray , 1.3, 5)
     face=faces[:1]
@@ -69,8 +67,8 @@ while True:
                 count = count + 1
                 print(count)
                 if count > 10 :
-                    cv2.putText(frame,"person is sleeping",(50,50),cv2.FONT_HERSHEY_SIMPLEX , 1 ,(0,255,0),2)
-                    #play_alarm()
+                    cv2.putText(frame,"person is sleeping",(50,50),cv2.FONT_HERSHEY_SIMPLEX , 1,(0,255,0),2)
+                    play_alarm()
 
                  
                 
